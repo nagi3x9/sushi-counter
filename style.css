@@ -1,5 +1,6 @@
 :root {
-    --primary: #FF4757; /* 寿司をイメージしたサーモンピンク系 */
+    --primary: #FF4757;
+    /* 寿司をイメージしたサーモンピンク系 */
     --primary-light: #FF6B81;
     --background: #F8F9FA;
     --card-bg: #FFFFFF;
@@ -22,9 +23,11 @@ body {
     color: var(--text-main);
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* スマホで上揃えにする */
+    align-items: flex-start;
+    /* スマホで上揃えにする */
     min-height: 100vh;
-    padding: 0; /* スマホ時は余白なし */
+    padding: 0;
+    /* スマホ時は余白なし */
 }
 
 .container {
@@ -32,8 +35,10 @@ body {
     width: 100%;
     max-width: 480px;
     min-height: 100vh;
-    border-radius: 0; /* スマホ時は角丸なし */
-    box-shadow: none; /* スマホ時は影なし */
+    border-radius: 0;
+    /* スマホ時は角丸なし */
+    box-shadow: none;
+    /* スマホ時は影なし */
     padding: calc(32px + env(safe-area-inset-top, 0px)) 20px calc(32px + env(safe-area-inset-bottom, 0px));
     display: flex;
     flex-direction: column;
@@ -44,8 +49,10 @@ body {
 @media (min-width: 481px) {
     body {
         padding: 20px;
-        align-items: center; /* 画面中央配置 */
+        align-items: center;
+        /* 画面中央配置 */
     }
+
     .container {
         min-height: auto;
         border-radius: var(--border-radius);
@@ -121,7 +128,8 @@ header p {
     user-select: none;
 }
 
-.plate-item:hover, .plate-item:active {
+.plate-item:hover,
+.plate-item:active {
     border-color: var(--primary-light);
     box-shadow: 0 4px 12px rgba(255, 71, 87, 0.12);
     background: #FFF;
@@ -139,14 +147,15 @@ header p {
     align-items: center;
     gap: 8px;
     margin-bottom: 8px;
-    pointer-events: none; /* 要素自体のクリックを親に回す */
+    pointer-events: none;
+    /* 要素自体のクリックを親に回す */
 }
 
 .plate-color {
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -163,10 +172,12 @@ header p {
 .plate-count-display {
     font-size: 28px;
     font-weight: 700;
-    color: white; /* お皿の色の上に乗るので白抜きなどにする */
+    color: white;
+    /* お皿の色の上に乗るので白抜きなどにする */
     line-height: 1;
     pointer-events: none;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.3); /* 見やすくするための影 */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    /* 見やすくするための影 */
     position: absolute;
     top: 50%;
     left: 50%;
@@ -185,6 +196,7 @@ header p {
     font-weight: 600;
     font-family: inherit;
     text-align: right;
+    pointer-events: auto;
 }
 
 .plate-item.editing .plate-price {
@@ -193,6 +205,26 @@ header p {
 
 .plate-item.editing .plate-price-input {
     display: block;
+}
+
+.plate-color-input {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.plate-item.editing .plate-color-input {
+    display: block;
+}
+
+.plate-item.editing .plate-color {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05), 0 0 0 2px var(--card-bg), 0 0 0 4px var(--primary-light);
 }
 
 .plate-controls {
@@ -246,7 +278,7 @@ header p {
     align-items: center;
     transition: all 0.2s ease;
     touch-action: manipulation;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     line-height: 0;
 }
 
@@ -289,6 +321,79 @@ header p {
 .add-plate-btn:hover {
     border-color: var(--text-main);
     color: var(--text-main);
+}
+
+/* プリセット機能のスタイル */
+.preset-section {
+    background: #FAFAFA;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.preset-section.hidden {
+    display: none;
+}
+
+.preset-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.preset-header h3 {
+    font-size: 16px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.preset-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+#preset-select {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background: white;
+    color: var(--text-main);
+    outline: none;
+}
+
+#preset-select:focus {
+    border-color: var(--primary-light);
+}
+
+.preset-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-color: var(--primary-light);
+    color: var(--primary);
+}
+
+.preset-btn:hover {
+    background: var(--primary-light);
+    color: white;
+}
+
+.preset-delete-btn {
+    border-color: var(--text-light);
+    color: var(--text-light);
+}
+
+.preset-delete-btn:hover {
+    background: var(--text-light);
+    color: white;
+    border-color: var(--text-light);
 }
 
 .total-section {
@@ -352,9 +457,18 @@ header p {
 }
 
 @keyframes pop {
-    0% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(1.2); color: var(--primary-light); }
-    100% { transform: translate(-50%, -50%) scale(1); }
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        color: var(--primary-light);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 
 /* モーダルスタイル */
@@ -386,7 +500,7 @@ header p {
     text-align: center;
     width: 100%;
     max-width: 360px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     transform: translateY(0);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -418,4 +532,36 @@ header p {
 
 #qrcode-container img {
     max-width: 100%;
+}
+
+/* モーダル内のカラーパレット */
+.color-palette-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: #FAFAFA;
+    border-radius: 12px;
+    justify-items: center;
+}
+
+.palette-color-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.palette-color-btn:hover {
+    transform: scale(1.15);
+}
+
+.palette-color-btn.selected {
+    border-color: var(--text-main);
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }

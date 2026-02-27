@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -22,10 +24,24 @@
         </header>
 
         <main>
+            <!-- プリセット機能のUI（常時表示） -->
+            <div id="preset-section" class="preset-section">
+                <div class="preset-header">
+                    <h3>🍣 お皿セット</h3>
+                    <button id="save-preset-btn" class="header-btn preset-btn">今のセットを保存</button>
+                </div>
+                <div class="preset-controls">
+                    <select id="preset-select">
+                        <option value="default">デフォルトセット</option>
+                    </select>
+                    <button id="delete-preset-btn" class="header-btn preset-btn preset-delete-btn">削除</button>
+                </div>
+            </div>
+
             <div id="plates-container" class="plates-grid">
                 <!-- JavaScriptで動的に生成 -->
             </div>
-            
+
             <button id="add-plate-btn" class="add-plate-btn">＋ 新しいお皿を追加</button>
 
             <div class="total-section">
@@ -37,6 +53,17 @@
 
             <button id="reset-btn" class="reset-btn">クリア</button>
         </main>
+    </div>
+
+    <!-- カラーパレット選択用モーダル -->
+    <div id="color-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>お皿の色を選ぶ</h3>
+            <div id="color-palette" class="color-palette-grid">
+                <!-- JSで動的に生成 -->
+            </div>
+            <button id="close-color-modal-btn" class="reset-btn">閉じる</button>
+        </div>
     </div>
 
     <!-- QRコード表示用モーダル -->
@@ -53,4 +80,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
