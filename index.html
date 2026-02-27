@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>代わりにお皿数えます</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍣 代わりにお皿数えます</h1>
+            <p>食べたお皿の枚数を入力してください</p>
+            <button id="edit-toggle-btn" class="edit-toggle-btn">カスタマイズ</button>
+        </header>
+
+        <main>
+            <div id="plates-container" class="plates-grid">
+                <!-- JavaScriptで動的に生成 -->
+            </div>
+            
+            <button id="add-plate-btn" class="add-plate-btn">＋ 新しいお皿を追加</button>
+
+            <div class="total-section">
+                <h2>合計金額</h2>
+                <div class="total-price">
+                    <span id="total-amount">0</span><span class="currency">円</span>
+                </div>
+            </div>
+
+            <button id="reset-btn" class="reset-btn">クリア</button>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
