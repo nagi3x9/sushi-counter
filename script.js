@@ -21,6 +21,12 @@ const resetBtn = document.getElementById('reset-btn');
 const editToggleBtn = document.getElementById('edit-toggle-btn');
 const addPlateBtn = document.getElementById('add-plate-btn');
 
+// QR・シェア機能用
+const shareBtn = document.getElementById('share-btn');
+const qrModal = document.getElementById('qr-modal');
+const closeModalBtn = document.getElementById('close-modal-btn');
+const qrContainer = document.getElementById('qrcode-container');
+
 // 初期化
 function init() {
     loadData();
@@ -30,6 +36,58 @@ function init() {
     resetBtn.addEventListener('click', resetCounts);
     editToggleBtn.addEventListener('click', toggleEditMode);
     addPlateBtn.addEventListener('click', addNewPlate);
+    
+    // シェア機能の初期化
+    initShareFeature();
+}
+
+// シェア機能のセットアップ
+function initShareFeature() {
+    shareBtn.addEventListener('click', () => {
+        // 現在のURLを取得
+        const currentUrl = window.location.href;
+        
+        // Web Share APIが使える場合はそちらを優先（スマホネイティブの共有メニュー）
+        if (navigator.share) {
+            navigator.share({
+                title: '代わりにお皿数えます',
+                text: 'お寿司のお皿を簡単に数えるアプリ！',
+                url: currentUrl,
+            }).catch(console.error);
+        } else {
+            // 使えない場合（PCや非対応ブラウザ）はQRコードモーダルを表示
+            showQrModal(currentUrl);
+        }
+    });
+    
+    closeModalBtn.addEventListener('click', () => {
+        qrModal.classList.add('hidden');
+    });
+    
+    // モーダル外枠クリックで閉じる
+    qrModal.addEventListener('click', (e) => {
+        if (e.target === qrModal) {
+            qrModal.classList.add('hidden');
+        }
+    });
+}
+
+// QRコードモーダルの表示
+function showQrModal(url) {
+    // 既存のQRコードをクリア
+    qrContainer.innerHTML = '';
+    
+    // 新しいQRコードを生成
+    new QRCode(qrContainer, {
+        text: url,
+        width: 160,
+        height: 160,
+        colorDark : "#2F3542",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+    });
+    
+    qrModal.classList.remove('hidden');
 }
 
 // データの読み込み
@@ -138,14 +196,14 @@ function renderPlates() {
         
         item.innerHTML = `
             <div class="plate-info">
-                <div class="plate-color" style="background-color: ${plate.color};" title="${plate.name}"></div>
+                <div class="plate-color" style="background-color: ${plate.color};" title="${plate.name}">
+                    <div class="plate-count-display" id="count-${plate.id}">${counts[plate.id] > 0 ? counts[plate.id] : ''}</div>
+                </div>
                 <div class="plate-price">${plate.price}円</div>
                 <input type="number" class="plate-price-input" value="${plate.price}" data-id="${plate.id}" min="0" step="10">
             </div>
             <div class="plate-controls">
-                <button class="control-btn minus-btn" data-id="${plate.id}">-</button>
-                <div class="plate-count" id="count-${plate.id}">${counts[plate.id]}</div>
-                <button class="control-btn plus-btn" data-id="${plate.id}">+</button>
+                <button class="minus-btn ${counts[plate.id] > 0 ? '' : 'hidden'}" id="minus-${plate.id}" data-id="${plate.id}" title="1枚減らす">−</button>
             </div>
             <button class="plate-delete-btn" data-id="${plate.id}">×</button>
         `;
@@ -154,17 +212,35 @@ function renderPlates() {
     });
     
     // イベントリスナーの追加
-    const plusBtns = document.querySelectorAll('.plus-btn');
+    const plateItems = document.querySelectorAll('.plate-item');
     const minusBtns = document.querySelectorAll('.minus-btn');
     const deleteBtns = document.querySelectorAll('.plate-delete-btn');
     const priceInputs = document.querySelectorAll('.plate-price-input');
     
-    plusBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => updateCount(e.target.dataset.id, 1));
+    // お皿全体をタップして追加
+    plateItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            if (isEditing) return; // 編集モード時はカウントしない
+            
+            // マイナスボタンや削除ボタン、インプットフィールドをクリックした場合は何もしない
+            if (e.target.closest('.minus-btn') || 
+                e.target.closest('.plate-delete-btn') || 
+                e.target.closest('.plate-price-input')) {
+                return;
+            }
+            
+            // それ以外（お皿自体）のクリックで追加
+            const id = e.currentTarget.querySelector('.minus-btn').dataset.id;
+            updateCount(id, 1);
+        });
     });
     
+    // マイナスボタンで減らす
     minusBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => updateCount(e.target.dataset.id, -1));
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // 親要素（お皿全体）へのクリックイベントの伝播を防ぐ
+            updateCount(e.currentTarget.dataset.id, -1);
+        });
     });
     
     deleteBtns.forEach(btn => {
@@ -186,13 +262,23 @@ function updateCount(id, delta) {
     
     // UI更新
     const countEl = document.getElementById(`count-${id}`);
+    const minusBtn = document.getElementById(`minus-${id}`);
+    
     if (countEl) {
-        countEl.textContent = counts[id];
+        countEl.textContent = counts[id] > 0 ? counts[id] : '';
         
         // アニメーション効果
         countEl.classList.remove('update-anim');
         void countEl.offsetWidth; // リフローを強制
         countEl.classList.add('update-anim');
+    }
+    
+    if (minusBtn) {
+        if (counts[id] > 0) {
+            minusBtn.classList.remove('hidden');
+        } else {
+            minusBtn.classList.add('hidden');
+        }
     }
     
     saveData();
@@ -221,7 +307,9 @@ function resetCounts() {
         customPlates.forEach(plate => {
             counts[plate.id] = 0;
             const countEl = document.getElementById(`count-${plate.id}`);
-            if (countEl) countEl.textContent = 0;
+            const minusBtn = document.getElementById(`minus-${plate.id}`);
+            if (countEl) countEl.textContent = '';
+            if (minusBtn) minusBtn.classList.add('hidden');
         });
         saveData();
         updateTotal();
