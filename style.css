@@ -69,7 +69,14 @@ header p {
     color: var(--text-light);
 }
 
-.edit-toggle-btn {
+.header-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.header-btn {
     background: transparent;
     border: 1px solid var(--border);
     padding: 6px 16px;
@@ -78,60 +85,94 @@ header p {
     font-weight: 600;
     color: var(--text-light);
     cursor: pointer;
-    margin-top: 12px;
     transition: all 0.2s ease;
     touch-action: manipulation;
 }
 
-.edit-toggle-btn:hover {
+.header-btn:hover {
     background: var(--background);
 }
 
-.edit-toggle-btn.active {
+.header-btn.active {
     background: var(--text-main);
     color: white;
     border-color: var(--text-main);
 }
 
 .plates-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
 }
 
 .plate-item {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    padding: 16px;
+    padding: 20px 16px;
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 16px;
     background: #FAFAFA;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    touch-action: manipulation;
+    position: relative;
+    user-select: none;
 }
 
-.plate-item:hover {
+.plate-item:hover, .plate-item:active {
     border-color: var(--primary-light);
-    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.08);
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.12);
     background: #FFF;
+    transform: scale(1.02);
+}
+
+.plate-item.editing {
+    cursor: default;
+    transform: none;
 }
 
 .plate-info {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
+    margin-bottom: 8px;
+    pointer-events: none; /* 要素自体のクリックを親に回す */
 }
 
 .plate-color {
-    width: 32px;
-    height: 32px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 }
 
 .plate-price {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
+    color: var(--text-light);
+    margin-top: 4px;
+}
+
+.plate-count-display {
+    font-size: 28px;
+    font-weight: 700;
+    color: white; /* お皿の色の上に乗るので白抜きなどにする */
+    line-height: 1;
+    pointer-events: none;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3); /* 見やすくするための影 */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
 }
 
 .plate-price-input {
@@ -155,25 +196,31 @@ header p {
 }
 
 .plate-controls {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    z-index: 2;
 }
 
 .plate-delete-btn {
     display: none;
-    width: 44px;
-    height: 44px;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 32px;
+    height: 32px;
     background: #ff6b81;
     color: white;
     border: none;
-    border-radius: 12px;
-    font-size: 20px;
+    border-radius: 50%;
+    font-size: 18px;
     font-weight: 600;
     cursor: pointer;
     justify-content: center;
     align-items: center;
     touch-action: manipulation;
+    z-index: 3;
+    box-shadow: 0 4px 8px rgba(255, 107, 129, 0.3);
 }
 
 .plate-item.editing .plate-controls {
@@ -184,13 +231,13 @@ header p {
     display: flex;
 }
 
-.control-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    border: none;
-    background: var(--background);
-    color: var(--text-main);
+.minus-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--background);
+    background: white;
+    color: var(--text-light);
     font-size: 24px;
     font-weight: 600;
     cursor: pointer;
@@ -198,22 +245,24 @@ header p {
     justify-content: center;
     align-items: center;
     transition: all 0.2s ease;
-    touch-action: manipulation; /* スマホでのダブルタップズームを防止 */
+    touch-action: manipulation;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    line-height: 0;
 }
 
-.control-btn:hover {
-    background: var(--border);
+.minus-btn.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
 }
 
-.control-btn:active {
-    transform: scale(0.95);
+.minus-btn:hover {
+    color: var(--primary);
+    border-color: var(--primary-light);
 }
 
-.plate-count {
-    font-size: 20px;
-    font-weight: 700;
-    width: 40px;
-    text-align: center;
+.minus-btn:active {
+    transform: scale(0.9);
 }
 
 .add-plate-btn {
@@ -303,7 +352,70 @@ header p {
 }
 
 @keyframes pop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); color: var(--primary-light); }
-    100% { transform: scale(1); }
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.2); color: var(--primary-light); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* モーダルスタイル */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    padding: 20px;
+}
+
+.modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    padding: 32px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    transform: translateY(0);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal.hidden .modal-content {
+    transform: translateY(20px);
+}
+
+.modal-content h3 {
+    margin-bottom: 8px;
+    color: var(--text-main);
+}
+
+.modal-content p {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 24px;
+}
+
+#qrcode-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+#qrcode-container img {
+    max-width: 100%;
 }
